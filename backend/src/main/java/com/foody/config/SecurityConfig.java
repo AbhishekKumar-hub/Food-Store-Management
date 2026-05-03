@@ -26,12 +26,14 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                // Swagger
+                // Swagger FULL ACCESS
                 .requestMatchers(
+                        "/v3/api-docs",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
-                        "/swagger-ui/index.html"
+                        "/swagger-ui/index.html",
+                        "/webjars/**"
                 ).permitAll()
 
                 // Public APIs
@@ -60,6 +62,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority("ROLE_ADMIN")
 
+                // Secure everything else
                 .anyRequest().authenticated()
             )
 
