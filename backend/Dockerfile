@@ -4,8 +4,11 @@ WORKDIR /app
 
 COPY . .
 
+# give permission
 RUN chmod +x mvnw
 
+# build project
 RUN ./mvnw clean package -DskipTests
 
-CMD ["java", "-jar", "target/*.jar"]
+# find jar and run it properly
+CMD java -jar $(ls target/*.jar | head -n 1)
