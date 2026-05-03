@@ -21,15 +21,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .cors(cors -> {})
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> {})
 
             .authorizeHttpRequests(auth -> auth
 
+                // Swagger
                 .requestMatchers(
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/swagger-ui.html"
+                        "/swagger-ui.html",
+                        "/swagger-ui/index.html"
                 ).permitAll()
 
                 // Public APIs
@@ -58,7 +60,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority("ROLE_ADMIN")
 
-                .anyRequest().denyAll()
+                .anyRequest().authenticated()
             )
 
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

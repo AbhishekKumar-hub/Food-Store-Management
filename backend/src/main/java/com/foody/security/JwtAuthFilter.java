@@ -36,9 +36,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        if (path.startsWith("/v3/api-docs") ||
-            path.startsWith("/swagger-ui") ||
-            path.equals("/swagger-ui.html")) {
+        // Skip Swagger completely
+        if (path.contains("swagger") || path.contains("api-docs")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -50,31 +49,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authHeader.substring(7);
-        String email = jwtUtil.extractEmail(token);
+        try {
+            String token = authHeader.substring(7);
+            String email = jwtUtil.extractEmail(token);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            User user = userRepository.findByEmail(email).orElse(null);
+                User user = userRepository.findByEmail(email).orElse(null);
 
-            if (user != null && !user.isBlocked()) {
+                if (user != null && !user.isBlocked()) {
 
-                SimpleGrantedAuthority authority =
-                        new SimpleGrantedAuthority(user.getRole());
+                    SimpleGrantedAuthority authority =
+                            new SimpleGrantedAuthority(user.getRole());
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                user.getEmail(),
-                                null,
-                                List.of(authority)
-                        );
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    user.getEmail(),
+                                    null,
+                                    List.of(authority)
+                            );
 
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+
+        } catch (Exception e) {
+           
         }
 
         filterChain.doFilter(request, response);
