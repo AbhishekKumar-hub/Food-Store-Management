@@ -33,7 +33,10 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/swagger-ui/index.html",
-                        "/webjars/**"
+                        "/webjars/**",
+                        "/v3/api-docs.yaml", 
+                        "/swagger-resources",      
+                        "/swagger-resources/**"
                 ).permitAll()
 
                 // Public APIs

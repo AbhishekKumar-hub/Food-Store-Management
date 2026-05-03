@@ -18,7 +18,8 @@ public class CorsConfig {
 
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
-                "https://food-store-management.vercel.app"
+                "https://food-store-management.vercel.app",
+                "https://food-backend-vzp9.onrender.com" 
         ));
 
         config.setAllowedMethods(List.of(
