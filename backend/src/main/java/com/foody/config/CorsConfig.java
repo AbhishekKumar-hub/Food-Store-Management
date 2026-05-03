@@ -16,11 +16,8 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:5500",
-                "http://127.0.0.1:5500",
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
                 "https://food-store-management.vercel.app"
         ));
 
@@ -32,14 +29,8 @@ public class CorsConfig {
                 "OPTIONS"
         ));
 
-        config.setAllowedHeaders(List.of(
-                "Authorization",
-                "Content-Type"
-        ));
-
-        config.setExposedHeaders(List.of(
-                "Authorization"
-        ));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
 
         config.setAllowCredentials(true);
 
