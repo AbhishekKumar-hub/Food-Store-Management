@@ -17,6 +17,12 @@ public class GlobalExceptionHandler {
             RuntimeException ex,
             HttpServletRequest request
     ) {
+
+        if (request.getRequestURI().startsWith("/v3/api-docs") ||
+            request.getRequestURI().startsWith("/swagger-ui")) {
+            throw ex;
+        }
+
         ApiErrorResponse error = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
@@ -71,6 +77,11 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request
     ) {
+        if (request.getRequestURI().startsWith("/v3/api-docs") ||
+            request.getRequestURI().startsWith("/swagger-ui")) {
+            throw new RuntimeException(ex);
+        }
+
         ApiErrorResponse error = new ApiErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
