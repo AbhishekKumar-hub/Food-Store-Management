@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://food-backend-vzp9.onrender.com";
 
 const API = {
   REGISTER: `${BASE_URL}/api/auth/register`,
