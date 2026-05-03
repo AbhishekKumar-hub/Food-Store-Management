@@ -36,6 +36,11 @@ public class ProductController {
         return productService.getAll();
     }
 
+    @GetMapping("/featured")
+    public List<Product> featured() {
+        return productService.getFeatured();
+    }
+
     @GetMapping("/{id}")
     public Product getById(@PathVariable String id) {
         return productService.getById(id);
@@ -48,7 +53,9 @@ public class ProductController {
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) String direction
+            @RequestParam(required = false) String direction,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Boolean vegetarian
     ) {
         return productService.searchFilterSort(
                 keyword,
@@ -56,8 +63,14 @@ public class ProductController {
                 minPrice,
                 maxPrice,
                 sortBy,
-                direction
+                direction,
+                category,
+                vegetarian
         );
     }
 
+    @GetMapping("/categories")
+    public List<String> categories() {
+        return productService.getCategories();
+    }
 }

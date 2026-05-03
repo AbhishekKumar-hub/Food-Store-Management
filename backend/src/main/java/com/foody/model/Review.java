@@ -3,6 +3,8 @@ package com.foody.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "reviews")
 public class Review {
 
@@ -13,6 +15,7 @@ public class Review {
     private String userEmail;
     private int rating;
     private String comment;
+    private LocalDateTime createdAt;
 
     public Review() {}
 
@@ -50,5 +53,13 @@ public class Review {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -4,6 +4,8 @@ public class CartItem {
 
     private String productId;
     private String name;
+    private String imageUrl;
+    private String category;
     private double price;
     private int quantity;
 
@@ -23,6 +25,22 @@ public class CartItem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public double getPrice() {

@@ -2,77 +2,241 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Foody | Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <title>Foody | Admin Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/admin.css" />
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/admin.js"></script>
 </head>
-<body>
+<body data-page="admin">
+  <div class="app-shell">
+    <nav class="navbar">
+      <div class="brand" onclick="window.location.href='index.html'">
+        <span class="brand-mark"><i data-lucide="utensils"></i></span>
+        <span>Foody</span>
+      </div>
+      <ul id="navLinks"></ul>
+    </nav>
 
-<nav class="navbar">
-  <h1 onclick="location.href='index.html'">🍔 Foody</h1>
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="#" onclick="logout()">Logout</a></li>
-  </ul>
-</nav>
+    <main class="page">
+      <section class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Admin</p>
+            <h2>Dashboard</h2>
+            <p class="muted">Manage menu, order status, analytics, and restaurant location.</p>
+          </div>
+        </div>
 
-<div class="container">
+        <div class="admin-grid">
+          <div class="stat-card"><span>Revenue</span><strong id="statRevenue">Rs 0</strong></div>
+          <div class="stat-card"><span>Orders</span><strong id="statOrders">0</strong></div>
+          <div class="stat-card"><span>Products</span><strong id="statProducts">0</strong></div>
+          <div class="stat-card"><span>Pending</span><strong id="statPending">0</strong></div>
+        </div>
+        <div class="admin-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+          <div class="stat-card"><span>Low stock products</span><strong id="statLow">0</strong></div>
+          <div class="stat-card">
+            <span>Demo data</span>
+            <button class="btn btn-outline" id="seedProductsBtn" type="button" style="margin-top:8px;">
+              <i data-lucide="sparkles"></i>Seed products
+            </button>
+          </div>
+        </div>
 
-  <h2>👑 Admin Dashboard</h2>
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Insights</p>
+              <h2>Charts</h2>
+            </div>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-box">
+              <h3>Revenue in last 7 days</h3>
+              <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="chart-box">
+              <h3>Category revenue</h3>
+              <canvas id="categoryChart"></canvas>
+            </div>
+            <div class="chart-box">
+              <h3>Status breakdown</h3>
+              <canvas id="statusChart"></canvas>
+            </div>
+            <div class="chart-box">
+              <h3>Top products</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Product</th><th>Qty</th><th>Revenue</th></tr></thead>
+                  <tbody id="topProductsTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
 
-  <div class="admin-section">
-    <h3 id="formTitle">Add Product</h3>
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Discounts</p>
+              <h2 id="couponFormTitle">Add Coupon</h2>
+            </div>
+          </div>
+          <form id="couponForm" class="admin-form">
+            <input type="hidden" id="couponId" />
+            <input id="couponCodeInput" class="input" placeholder="Code, e.g. WELCOME10" required />
+            <select id="couponType" class="select">
+              <option value="PERCENT">Percent</option>
+              <option value="FLAT">Flat</option>
+            </select>
+            <input id="couponValue" class="input" type="number" min="1" placeholder="Discount value" required />
+            <input id="couponMin" class="input" type="number" min="0" placeholder="Min order" />
+            <input id="couponMax" class="input" type="number" min="0" placeholder="Max discount" />
+            <input id="couponExpiry" class="input" type="date" />
+            <label class="chip"><input id="couponActive" type="checkbox" checked /> Active</label>
+            <div class="admin-actions full">
+              <button class="btn btn-primary" type="submit"><i data-lucide="save"></i>Save Coupon</button>
+              <button class="btn btn-outline" id="resetCouponBtn" type="button">Clear</button>
+            </div>
+          </form>
+          <div class="table-wrap" style="margin-top:16px;">
+            <table>
+              <thead>
+                <tr><th>Code</th><th>Type</th><th>Value</th><th>Rules</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="couponTable"></tbody>
+            </table>
+          </div>
+        </section>
 
-    <input type="hidden" id="productId">
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Menu CRUD</p>
+              <h2 id="formTitle">Add Product</h2>
+            </div>
+          </div>
+          <form id="productForm" class="admin-form">
+            <input type="hidden" id="productId" />
+            <input id="name" class="input" placeholder="Product name" required />
+            <input id="category" class="input" placeholder="Category" />
+            <input id="price" class="input" type="number" min="0" placeholder="Price" required />
+            <input id="imageUrl" class="input" placeholder="Image URL" />
+            <input id="stock" class="input" type="number" min="0" placeholder="Stock" required />
+            <input id="prepTime" class="input" type="number" min="5" value="25" placeholder="Prep minutes" />
+            <label class="chip"><input id="vegetarian" type="checkbox" /> Vegetarian</label>
+            <textarea id="description" class="full" placeholder="Description"></textarea>
+            <div class="admin-actions full">
+              <button class="btn btn-primary" type="submit"><i data-lucide="save"></i>Save Product</button>
+              <button class="btn btn-outline" id="resetProductBtn" type="button">Clear</button>
+            </div>
+          </form>
+        </section>
 
-    <div class="admin-form">
-      <input id="name" placeholder="Product Name">
-      <input id="price" type="number" placeholder="Price">
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Inventory</p>
+              <h2>Products</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Type</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="productTable"></tbody>
+            </table>
+          </div>
+        </section>
 
-      <input id="imageUrl" placeholder="Image URL">
-      <input id="stock" type="number" placeholder="Stock">
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Fulfilment</p>
+              <h2>Orders</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="orderTable"></tbody>
+            </table>
+          </div>
+        </section>
 
-      <textarea id="description" placeholder="Description"></textarea>
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Customers</p>
+              <h2>User Management</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Name</th><th>Email</th><th>Role</th><th>Orders</th><th>Spent</th><th>Status</th><th>Action</th></tr>
+              </thead>
+              <tbody id="userTable"></tbody>
+            </table>
+          </div>
+        </section>
 
-      <label>
-        <input type="checkbox" id="available"> Available
-      </label>
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Restaurant</p>
+              <h2>Location and Details</h2>
+            </div>
+          </div>
+          <div class="restaurant-grid">
+            <form id="restaurantForm" class="form-grid">
+              <input id="restaurantName" class="input" placeholder="Restaurant name" />
+              <input id="restaurantPhone" class="input" placeholder="Phone" />
+              <input id="restaurantHours" class="input full" placeholder="Opening hours" />
+              <input id="restaurantAddress" class="input full" placeholder="Address line" />
+              <input id="restaurantCity" class="input" placeholder="City" />
+              <input id="restaurantLat" class="input" placeholder="Latitude" readonly />
+              <input id="restaurantLng" class="input" placeholder="Longitude" readonly />
+              <textarea id="restaurantDescription" class="full" placeholder="Description"></textarea>
+              <div class="admin-actions full">
+                <button class="btn btn-outline" id="restaurantLocationBtn" type="button">
+                  <i data-lucide="crosshair"></i>Use current location
+                </button>
+                <button class="btn btn-primary" type="submit">
+                  <i data-lucide="save"></i>Save Restaurant
+                </button>
+              </div>
+            </form>
+            <div id="restaurantMap" class="map" style="height:360px;"></div>
+          </div>
+        </section>
+      </section>
+    </main>
 
-      <div class="admin-form-actions">
-        <button type="button" class="btn btn-primary" onclick="saveProduct()">Save</button>
-        <button type="button" class="btn btn-outline" onclick="resetForm()">Clear</button>
+    <div class="modal-backdrop" id="orderModal">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Order Detail</p>
+            <h2 id="orderModalTitle">Order</h2>
+          </div>
+          <button class="icon-button" type="button" onclick="closeOrderModal()" aria-label="Close"><i data-lucide="x"></i></button>
+        </div>
+        <div id="orderModalBody"></div>
+        <div id="adminOrderMap" class="map" style="margin-top:14px;"></div>
       </div>
     </div>
+
+    <footer class="footer">Foody 2026.</footer>
   </div>
-
-  <div class="admin-section">
-    <h3>📦 Products</h3>
-    <div id="productList"></div>
-  </div>
-
- 
-  <div class="admin-section">
-    <h3>📊 Revenue Analytics</h3>
-    <div style="position: relative; height: 280px;">
-      <canvas id="revenueChart"></canvas>
-    </div>
-  </div>
-
-</div>
-
-<script src="js/api.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/admin.js"></script>
-
-<script>
-  const user = getUser();
-  if (!user || user.role !== "ROLE_ADMIN") {
-    alert("Admin access only");
-    location.href = "index.html";
-  }
-</script>
-
 </body>
 </html>

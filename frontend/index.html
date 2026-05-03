@@ -2,97 +2,124 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Foody | Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foody | Fresh Food Delivery</title>
+  <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="stylesheet" href="css/style.css" />
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/products.js"></script>
 </head>
-<body>
+<body data-page="home">
+  <div class="app-shell">
+    <nav class="navbar">
+      <div class="brand" onclick="window.location.href='index.html'">
+        <span class="brand-mark"><i data-lucide="utensils"></i></span>
+        <span>Foody</span>
+      </div>
+      <ul id="navLinks"></ul>
+    </nav>
 
-<nav class="navbar">
-  <h1 onclick="window.location.href='index.html'">🍔 Foody</h1>
-  <ul id="navLinks"></ul>
-</nav>
+    <main class="page">
+      <section class="container hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Fast campus-style food ordering</p>
+          <h1>Foody</h1>
+          <p>Browse dishes, filter by budget, add to cart, pin your delivery location, track preparation, and leave reviews after delivery.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" type="button" id="heroCta">
+              <i data-lucide="arrow-down"></i>Explore menu
+            </button>
+            <a class="btn btn-outline" href="cart.html">
+              <i data-lucide="shopping-bag"></i>Checkout
+            </a>
+          </div>
+          <div class="metric-strip">
+            <div class="metric"><strong>Live</strong><span>Stock checks</span></div>
+            <div class="metric"><strong>Map</strong><span>Delivery pin</span></div>
+            <div class="metric"><strong>Smart</strong><span>Food assistant</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=85" alt="Fresh burger and fries" />
+          <div class="hero-card">
+            <div>
+              <strong>Freshly prepared</strong>
+              <span>Order tracking from kitchen to delivery</span>
+            </div>
+            <span class="pill pill-success">Open</span>
+          </div>
+        </div>
+      </section>
 
-<div class="container">
-  <h2 style="margin-bottom:10px;">Popular Dishes 😋</h2>
+      <section class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Featured</p>
+            <h2>Trending picks</h2>
+            <p class="muted">Top dishes based on orders, stock and ratings.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="icon-button" id="featuredPrev" type="button" aria-label="Previous featured item"><i data-lucide="chevron-left"></i></button>
+            <button class="icon-button" id="featuredNext" type="button" aria-label="Next featured item"><i data-lucide="chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="featured-track" id="featuredTrack"></div>
+      </section>
 
+      <section class="container" id="menuSection">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Menu</p>
+            <h2>Popular Dishes</h2>
+            <p class="muted">Search, sort, and filter food cards instantly.</p>
+          </div>
+        </div>
 
-<div class="filter-bar">
+        <div class="category-shell">
+          <button class="icon-button" id="catPrev" type="button" aria-label="Previous category"><i data-lucide="chevron-left"></i></button>
+          <div class="category-track" id="categoryTrack"></div>
+          <button class="icon-button" id="catNext" type="button" aria-label="Next category"><i data-lucide="chevron-right"></i></button>
+        </div>
 
-  <input id="searchKeyword" class="filter-input"
-         placeholder="🔍 Search dishes..." />
+        <div class="toolbar panel">
+          <input id="searchKeyword" class="filter-input" placeholder="Search dishes" oninput="applyFilters()" />
+          <input id="minPrice" class="filter-input" type="number" min="0" placeholder="Min price" />
+          <input id="maxPrice" class="filter-input" type="number" min="0" placeholder="Max price" />
+          <select id="availability" class="filter-select">
+            <option value="">All stock</option>
+            <option value="true">Available</option>
+            <option value="false">Unavailable</option>
+          </select>
+          <select id="sortBy" class="filter-select">
+            <option value="">Sort by</option>
+            <option value="price">Price</option>
+            <option value="name">Name</option>
+            <option value="stock">Stock</option>
+          </select>
+          <select id="direction" class="filter-select">
+            <option value="asc">Low to high</option>
+            <option value="desc">High to low</option>
+          </select>
+          <label class="chip"><input id="vegOnly" type="checkbox" onchange="applyFilters()" /> Veg</label>
+          <button class="btn btn-primary" type="button" onclick="applyFilters()">
+            <i data-lucide="sliders-horizontal"></i>Apply
+          </button>
+        </div>
 
-  <input id="minPrice" class="filter-input"
-         type="number" placeholder="Min ₹" />
+        <div id="productGrid" class="product-grid"></div>
+        <div id="emptyState" class="empty" style="display:none;">
+          <div>
+            <i data-lucide="search-x"></i>
+            <h2>No dishes found</h2>
+            <p>Try another search or price range.</p>
+          </div>
+        </div>
+      </section>
+    </main>
 
-  <input id="maxPrice" class="filter-input"
-         type="number" placeholder="Max ₹" />
-
-  <select id="availability" class="filter-select">
-    <option value="">All</option>
-    <option value="true">Available</option>
-    <option value="false">Unavailable</option>
-  </select>
-
-  <select id="sortBy" class="filter-select">
-    <option value="">Sort</option>
-    <option value="price">Price</option>
-    <option value="name">Name</option>
-  </select>
-
-  <select id="direction" class="filter-select">
-    <option value="asc">Asc</option>
-    <option value="desc">Desc</option>
-  </select>
-
-  <button class="btn btn-primary"
-          onclick="applyFilters()">
-    Apply
-  </button>
-
-</div>
-
-
-  <div id="productGrid" class="product-grid"></div>
-
-  <div id="emptyState" class="empty" style="display:none;">
-    <h2>No products found</h2>
+    <div id="chatbotRoot"></div>
+    <footer class="footer">Foody 2026. Built with HTML, CSS, JS, Spring Boot, MongoDB and JWT.</footer>
   </div>
-</div>
-
-<div class="footer">
-  © 2026 Foody. All rights reserved.
-</div>
-
-
-<script src="js/api.js"></script>
-<script src="js/products.js"></script>
-
-<script>
-  const nav = document.getElementById("navLinks");
-  const user = getUser();
-
-  let links = `<li><a href="index.html">Home</a></li>`;
-
-  if (!user) {
-    links += `<li><a href="login.html">Login</a></li>`;
-  } else if (user.role === "ROLE_ADMIN") {
-    links += `<li><a href="admin.html">Admin</a></li>`;
-    links += `<li><a href="#" onclick="logout()">Logout</a></li>`;
-  } else {
-    links += `
-      <li>
-        <a href="cart.html">
-          Cart <span class="badge" id="cartCount">0</span>
-        </a>
-      </li>
-      <li><a href="orders.html">Orders</a></li>
-      <li><a href="#" onclick="logout()">Logout</a></li>
-    `;
-  }
-
-  nav.innerHTML = links;
-</script>
-
 </body>
 </html>

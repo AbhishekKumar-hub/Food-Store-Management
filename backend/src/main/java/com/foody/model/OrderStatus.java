@@ -2,5 +2,9 @@ package com.foody.model;
 
 public enum OrderStatus {
     PLACED,
-    DELIVERED
+    CONFIRMED,
+    PREPARING,
+    OUT_FOR_DELIVERY,
+    DELIVERED,
+    CANCELLED
 }

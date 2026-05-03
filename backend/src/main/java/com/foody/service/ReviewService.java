@@ -1,11 +1,13 @@
 package com.foody.service;
 
 import com.foody.model.Order;
+import com.foody.model.OrderStatus;
 import com.foody.model.Review;
 import com.foody.repository.OrderRepository;
 import com.foody.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,19 +38,21 @@ public class ReviewService {
 
         List<Order> orders = orderRepository.findByUserEmail(email);
 
-        boolean hasOrdered = orders.stream()
+        boolean hasDeliveredOrder = orders.stream()
+                .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
                 .flatMap(order -> order.getItems().stream())
                 .anyMatch(item -> item.getProductId().equals(productId));
 
-        if (!hasOrdered) {
-            throw new RuntimeException("You can review only products you ordered");
+        if (!hasDeliveredOrder) {
+            throw new RuntimeException("You can review only products from delivered orders");
         }
 
         Review review = new Review();
         review.setProductId(productId);
         review.setUserEmail(email);
         review.setRating(rating);
-        review.setComment(comment);
+        review.setComment(comment == null ? "" : comment.trim());
+        review.setCreatedAt(LocalDateTime.now());
 
         return reviewRepository.save(review);
     }

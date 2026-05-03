@@ -37,6 +37,15 @@ public class CartController {
         return cartService.removeItem(auth.getName(), productId);
     }
 
+    @PutMapping("/item/{productId}")
+    public Cart updateQuantity(
+            @PathVariable String productId,
+            @RequestParam int quantity,
+            Authentication auth
+    ) {
+        return cartService.updateQuantity(auth.getName(), productId, quantity);
+    }
+
     @DeleteMapping("/clear")
     public String clearCart(Authentication auth) {
         cartService.clearCart(auth.getName());

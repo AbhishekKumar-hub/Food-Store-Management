@@ -2,43 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Foody | Cart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-
+  <title>Foody | Cart</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/cart.js"></script>
 </head>
-<body>
+<body data-page="cart">
+  <div class="app-shell">
+    <nav class="navbar">
+      <div class="brand" onclick="window.location.href='index.html'">
+        <span class="brand-mark"><i data-lucide="utensils"></i></span>
+        <span>Foody</span>
+      </div>
+      <ul id="navLinks"></ul>
+    </nav>
 
-  <nav class="navbar">
-    <h1 onclick="window.location.href='index.html'">🍔 Foody</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="orders.html">Orders</a></li>
-      <li><a href="#" onclick="logout()">Logout</a></li>
-    </ul>
-  </nav>
+    <main class="page">
+      <section class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Checkout</p>
+            <h2>Your Cart</h2>
+            <p class="muted">Confirm items, delivery location, and payment mode.</p>
+          </div>
+          <a class="btn btn-outline" href="index.html"><i data-lucide="plus"></i>Add more</a>
+        </div>
 
-  <div class="container">
-    <h2 style="margin-bottom:20px;">Your Cart 🛒</h2>
+        <div class="split-grid">
+          <div>
+            <div id="cartItems"></div>
+            <div id="emptyCart" class="empty" style="display:none;">
+              <div>
+                <i data-lucide="shopping-cart"></i>
+                <h2>Your cart is empty</h2>
+                <p>Add a dish from the menu.</p>
+              </div>
+            </div>
+          </div>
 
-    <div id="cartItems"></div>
+          <aside id="cartFooter" class="panel" style="display:none;">
+            <h3>Delivery Address</h3>
+            <div class="address-list" id="addressList"></div>
+            <div class="hero-actions">
+              <button class="btn btn-outline" id="useLocationBtn" type="button">
+                <i data-lucide="crosshair"></i>Use current location
+              </button>
+              <a class="btn btn-ghost" href="profile.html">Manage addresses</a>
+            </div>
 
-    <div id="cartFooter" style="display:none;">
-      <div class="total" id="totalAmount">₹0</div>
-      <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="placeOrder()">
-        Place Order
-      </button>
-    </div>
+            <div id="deliveryMap" class="map" style="margin-top:14px;"></div>
+            <div id="deliveryEta" class="eta-box" style="display:none;"></div>
 
-    <div id="emptyCart" class="empty" style="display:none;">
-      <h2>Your cart is empty</h2>
-      <p>Add some delicious food 😋</p>
-    </div>
+            <h3 style="margin-top:18px;">Payment</h3>
+            <label class="address-option">
+              <input id="payCod" type="radio" name="paymentMode" value="CASH_ON_DELIVERY" checked />
+              <span><strong>Cash on Delivery</strong><br/><small class="muted">Works without extra keys.</small></span>
+            </label>
+            <label class="address-option" id="razorpayOption">
+              <input id="payRazorpay" type="radio" name="paymentMode" value="RAZORPAY" />
+              <span><strong>Razorpay</strong><br/><small class="muted">Enabled after adding test keys.</small></span>
+            </label>
+
+            <textarea id="orderNote" placeholder="Delivery note, optional" style="margin-top:12px;"></textarea>
+
+            <h3 style="margin-top:18px;">Coupon</h3>
+            <div class="form-actions">
+              <input id="couponCode" class="input" placeholder="Enter coupon code" />
+              <button class="btn btn-outline" id="applyCouponBtn" type="button">
+                <i data-lucide="badge-percent"></i>Apply
+              </button>
+              <button class="btn btn-ghost" id="removeCouponBtn" type="button">Remove</button>
+            </div>
+            <p id="couponMessage" class="muted" style="margin-top:8px;"></p>
+
+            <div class="total">
+              <span>Subtotal</span>
+              <span id="subtotalAmount">Rs 0</span>
+            </div>
+            <div class="total">
+              <span>Discount</span>
+              <span id="discountAmount">Rs 0</span>
+            </div>
+            <div class="total">
+              <span>Payable</span>
+              <span id="totalAmount">Rs 0</span>
+            </div>
+            <button class="btn btn-primary" id="placeOrderBtn" type="button" style="width:100%; margin-top:14px;">
+              <i data-lucide="badge-check"></i>Place Order
+            </button>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">Foody 2026.</footer>
   </div>
-
-  <script src="js/api.js"></script>
-  <script src="js/cart.js"></script>
-
 </body>
 </html>

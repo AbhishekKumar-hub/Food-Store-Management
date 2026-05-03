@@ -60,11 +60,17 @@ public class CartService {
             CartItem newItem = new CartItem();
             newItem.setProductId(productId);
             newItem.setName(product.getName());
+            newItem.setImageUrl(product.getImageUrl());
+            newItem.setCategory(product.getCategory());
             newItem.setPrice(product.getPrice());
             newItem.setQuantity(quantity);
             cart.getItems().add(newItem);
         } else {
             item.setQuantity(alreadyInCart + quantity);
+            item.setName(product.getName());
+            item.setImageUrl(product.getImageUrl());
+            item.setCategory(product.getCategory());
+            item.setPrice(product.getPrice());
         }
 
         return cartRepository.save(cart);
@@ -105,6 +111,41 @@ public class CartService {
             cartRepository.delete(cart);
             return new Cart();
         }
+
+        return cartRepository.save(cart);
+    }
+
+    public Cart updateQuantity(String email, String productId, int quantity) {
+        if (quantity <= 0) {
+            return removeItem(email, productId);
+        }
+
+        Cart cart = cartRepository.findByUserEmail(email)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (!product.isAvailable() || product.getStock() <= 0) {
+            throw new RuntimeException(product.getName() + " is out of stock");
+        }
+
+        if (quantity > product.getStock()) {
+            throw new RuntimeException(
+                    "Only " + product.getStock() + " item(s) available for " + product.getName()
+            );
+        }
+
+        CartItem item = cart.getItems().stream()
+                .filter(i -> i.getProductId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Item not found in cart"));
+
+        item.setQuantity(quantity);
+        item.setName(product.getName());
+        item.setImageUrl(product.getImageUrl());
+        item.setCategory(product.getCategory());
+        item.setPrice(product.getPrice());
 
         return cartRepository.save(cart);
     }

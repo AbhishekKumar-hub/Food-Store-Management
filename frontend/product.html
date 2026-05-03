@@ -2,92 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Foody | Product Details</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foody | Product Details</title>
   <link rel="stylesheet" href="css/style.css" />
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/product.js"></script>
 </head>
-<body>
+<body data-page="home">
+  <div class="app-shell">
+    <nav class="navbar">
+      <div class="brand" onclick="window.location.href='index.html'">
+        <span class="brand-mark"><i data-lucide="utensils"></i></span>
+        <span>Foody</span>
+      </div>
+      <ul id="navLinks"></ul>
+    </nav>
 
-<nav class="navbar">
-  <h1 onclick="window.location.href='index.html'">🍔 Foody</h1>
-  <ul id="navLinks"></ul>
-</nav>
+    <main class="page">
+      <section class="container" id="productContainer"></section>
 
-<div class="container">
+      <section class="container" style="margin-top:24px;">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Reviews</p>
+            <h2>Customer Feedback</h2>
+          </div>
+        </div>
 
-  <div id="productContainer"></div>
+        <div class="split-grid">
+          <div class="panel">
+            <div id="reviewsList" class="review-list"></div>
+          </div>
 
+          <form id="reviewForm" class="panel form-grid" style="display:none;">
+            <div class="full">
+              <h3>Share your review</h3>
+              <p class="muted">Reviews are accepted only for products you ordered.</p>
+            </div>
+            <select id="rating" class="select full">
+              <option value="">Select rating</option>
+              <option value="5">5 - Excellent</option>
+              <option value="4">4 - Good</option>
+              <option value="3">3 - Average</option>
+              <option value="2">2 - Needs work</option>
+              <option value="1">1 - Poor</option>
+            </select>
+            <textarea id="comment" class="full" placeholder="Write your review"></textarea>
+            <button type="button" class="btn btn-primary full" onclick="submitReview()">
+              <i data-lucide="send"></i>Submit Review
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
 
-  <div class="card review-section">
-
-    <h3>Customer Reviews</h3>
-
-    <div id="reviewsList" class="review-list">
-      <p style="color:gray;">No reviews yet</p>
-    </div>
-
-    <form id="reviewForm" class="review-form" style="display:none;">
-      
-      <label>Rating</label>
-      <select id="rating">
-        <option value="">Select</option>
-        <option value="5">⭐ 5</option>
-        <option value="4">⭐ 4</option>
-        <option value="3">⭐ 3</option>
-        <option value="2">⭐ 2</option>
-        <option value="1">⭐ 1</option>
-      </select>
-
-      <textarea
-        id="comment"
-        placeholder="Write your review..."
-      ></textarea>
-
-      <button
-        type="button"
-        class="btn btn-primary"
-        onclick="submitReview()"
-      >
-        Submit Review
-      </button>
-
-    </form>
+    <div id="chatbotRoot"></div>
+    <footer class="footer">Foody 2026.</footer>
   </div>
-
-</div>
-
-<div class="footer">
-  © 2026 Foody. All rights reserved.
-</div>
-
-<script src="js/api.js"></script>
-<script src="js/product.js"></script>
-
-<script>
-  const nav = document.getElementById("navLinks");
-  const user = getUser();
-
-  let links = `<li><a href="index.html">Home</a></li>`;
-
-  if (!user) {
-    links += `<li><a href="login.html">Login</a></li>`;
-  } else if (user.role === "ROLE_ADMIN") {
-    links += `<li><a href="admin.html">Admin</a></li>`;
-    links += `<li><a href="#" onclick="logout()">Logout</a></li>`;
-  } else {
-    links += `
-      <li>
-        <a href="cart.html">
-          Cart <span class="badge" id="cartCount">0</span>
-        </a>
-      </li>
-      <li><a href="orders.html">Orders</a></li>
-      <li><a href="#" onclick="logout()">Logout</a></li>
-    `;
-  }
-
-  nav.innerHTML = links;
-</script>
-
 </body>
 </html>

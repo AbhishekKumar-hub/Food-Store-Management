@@ -2,42 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Foody | Orders</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
- 
+  <title>Foody | Orders</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/orders.js"></script>
 </head>
-<body>
+<body data-page="orders">
+  <div class="app-shell">
+    <nav class="navbar">
+      <div class="brand" onclick="window.location.href='index.html'">
+        <span class="brand-mark"><i data-lucide="utensils"></i></span>
+        <span>Foody</span>
+      </div>
+      <ul id="navLinks"></ul>
+    </nav>
 
+    <main class="page">
+      <section class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Tracking</p>
+            <h2>Your Orders</h2>
+            <p class="muted">Status refreshes automatically while the page is open.</p>
+          </div>
+        </div>
 
-  <nav class="navbar">
-    <h1 onclick="window.location.href='index.html'">🍔 Foody</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="#" onclick="logout()">Logout</a></li>
-    </ul>
-  </nav>
+        <div class="split-grid">
+          <div>
+            <div id="ordersList"></div>
+            <div id="emptyOrders" class="empty" style="display:none;">
+              <div>
+                <i data-lucide="package-open"></i>
+                <h2>No orders yet</h2>
+                <p>Your first order will show up here.</p>
+              </div>
+            </div>
+          </div>
 
+          <aside class="panel" id="ordersMapPanel" style="display:none;">
+            <h3 id="ordersMapTitle">Tracking order</h3>
+            <div id="ordersMap" class="map"></div>
+            <div id="ordersEta" class="eta-box" style="display:none;"></div>
+          </aside>
+        </div>
+      </section>
+    </main>
 
-  <div class="container">
-    <h2 style="margin-bottom:20px;">Your Orders 📦</h2>
-
-    <div id="ordersList"></div>
-
-    <div id="emptyOrders" class="empty" style="display:none;">
-      <h2>No orders yet</h2>
-      <p>Place your first order 😋</p>
-    </div>
+    <div id="chatbotRoot"></div>
+    <footer class="footer">Foody 2026.</footer>
   </div>
-
-  <div class="footer">
-    © 2026 Foody. All rights reserved.
-  </div>
-
-  <script src="js/api.js"></script>
-  <script src="js/orders.js"></script>
-
 </body>
 </html>
