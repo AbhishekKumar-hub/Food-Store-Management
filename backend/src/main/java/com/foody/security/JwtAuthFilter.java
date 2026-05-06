@@ -78,7 +78,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
-            // Prevent Swagger crash if token invalid
+            // Prevent Swagger crash if token is invalid
         }
 
         filterChain.doFilter(request, response);
