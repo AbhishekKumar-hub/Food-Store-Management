@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+// global exception handling for all type possible exceptions 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
